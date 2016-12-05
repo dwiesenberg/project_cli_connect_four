@@ -4,9 +4,13 @@
 
 module ConnectFour
   class Game
+    attr_accessor :win_by_AI
+
     def initialize
       @board = Board.new
       Player.new
+      puts "class Game initialized ... "
+      puts "in class Game ... class Board initialized ..."
     end
 
     def play
@@ -22,8 +26,17 @@ module ConnectFour
       loop do
         @board.available_positions? || draw 
           # to place counter in; game draw if none
-        @current_player.make_move
-        @board.render_board
+#      print "Computer to play ... "
+#      sleep(1)
+#      @board_AI.decide_move
+#      @board.update_available_positions 
+#        @col = @current_player.make_move(@board.available_positions, @board.frame)
+        @col = @current_player.make_move
+        puts "in take_turn ... @current_player.color = #{@current_player.color}"
+        @board.update_frame(@col, @current_player.color)
+        @board.update_available_positions(@col)
+        puts "@\ncurrent_player = #{@current_player}\n"
+        @board.render_frame
         win?
         @current_player = change_players
         pause # to consider move or interrupt game
@@ -84,12 +97,15 @@ module ConnectFour
     end
 
     def setup_players # note: Y, R = yellow, red counters
-      @player_1 = Human.new(@board, get_player_name, "Y")  
+
+      @player_1 = Human.new(@board, get_player_name, "Y")
         # Y = yellow counters
       if play_computer? == "Y"
+
         @player_2 = Computer.new(@board, "the Computer", "R")
           # R = red counters
       else
+
         @player_2 = Human.new(@board, get_player_name, "R")
       end
     end
@@ -131,8 +147,14 @@ module ConnectFour
 
     def win?
       # win if four consecutive counters are found
-      return unless @board.line_of_four?
-      puts "\nCongratulations! #{@current_player.to_s} has won the game\n"
+      if @current_player.name == "the Computer"
+        return unless @board_AI.win_by_AI == "Y"        
+        print "\nBad luck! " 
+      else  # player is Human
+        return unless @board.line_of_four?
+        print "\nCongratulations! "
+      end
+      puts "#{@current_player.to_s} has won the game.\n"
       exit
     end
 

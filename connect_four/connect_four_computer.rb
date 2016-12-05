@@ -6,23 +6,31 @@ module ConnectFour
   class Computer < Player
     attr_accessor :board, :name, :color 
 
-    def initialize(board, name, color)
-# TODO     super      Q: 1. super necessary anyway? 2. why is there argument problem (like 2 for 1) - does not reconcile 1 arg for super (board) and one for Human (name)     
+    def initialize(board, name, color)  
       @board = board
       @name = name
       @color = color
+      @board_AI = Board_AI.new       
     end
 
-    def to_s
-      @name
-    end
+# story 1 - random move - superseded by story 2 (AI move)
+#    def make_move
+#      print "Computer to play ... "
+#      sleep(1)
+#      while @board.available_positions[@col = rand(0..6)] > 5; end
+#      puts "counter dropped into column #{@col}"
+#      @board.update_frame(@col, @color)
+#    end
 
-    def make_move
-      print print "Computer to play ... "
+# story 2 - AI move
+
+#    def make_move(available_positions, board)
+    def make_move     
+      print "Computer to play ... "
       sleep(1)
-      while @board.available_positions[@col = rand(0..6)] > 5; end
-      puts "counter dropped into column #{@col}"
-      @board.update_board(@col, @color)
+#      @board_AI.decide_move(available_positions, board)
+      @board_AI.decide_move
+      @col
     end
 
   end

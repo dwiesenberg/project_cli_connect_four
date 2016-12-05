@@ -1,47 +1,77 @@
-# Connect Four
+
 
 # class Board
 
-module ConnectFour
   class Board
-
     attr_accessor :col, :row, :color
-    attr_accessor :available_positions 
-    COLUMN_PRIORITY = [3, 2, 4, 1, 5, 0, 6]
-    COLORS = ["R", "Y"]
-
+    attr_reader :available_positions 
 
     def initialize
-      @frame = Array.new(6){Array.new(7, " ")} # 6 rows, 7 columns
-      @available_positions = Array.new(7, 0) 
-      puts "in class Board ... initialized ..."
-      puts "@available_positions = #{@available_positions}"
-        # 7 columns, value = available row, starting from botto
+    @board = Array.new(6){Array.new(7, " ")} # 6 rows, 7 columns
     end  
 
-    def test_Board
-      puts "test_Board"
+ #   def available_positions?   # col is full if row > 5
+#     @available_positions.each { |row| return true unless row > 5  }
+#     puts "false"
+#     false
+#    end
+
+    def test_line_of_four
+      update_board
+      render_board
+      line_of_four?
     end
 
-    def update_frame(col, color)
-      @col = col
-      @row = @available_positions[@col]
-      @frame[@row][@col] = color
-      puts " in update_frame ... updated frame"
+    def update_board
+
+      @board[3][6] = "Y"
+      @board[2][6] = "R"
+      @board[1][6] = "Y"   
+      @board[0][6] = "Y"      
+
+      @board[3][5] = "Y"
+      @board[2][5] = "Y"
+      @board[1][5] = "Y"   
+      @board[0][5] = "R"
+
+      @board[3][4] = "Y"
+      @board[2][4] = "Y"
+      @board[1][4] = "Y"   
+      @board[0][4] = "Y"
+
+      @board[3][3] = "R"
+      @board[2][3] = "Y"
+      @board[1][3] = "Y"   
+      @board[0][3] = "Y"
+       
+      @board[3][2] = "R"
+      @board[2][2] = "R"
+      @board[1][2] = "R"   
+      @board[0][2] = "Y"
+       
+      @board[3][1] = "Y"
+      @board[2][1] = "R"
+      @board[1][1] = "Y"  
+      @board[0][1] = "Y"
+       
+      @board[3][0] = "R"
+      @board[2][0] = "Y"
+      @board[1][0] = "Y"   
+      @board[0][0] = "Y"
+
+
+
+      @row = 3
+      @col = 5
+      @board[@row][@col] = "Y"
     end
 
-    def update_available_positions(col)
-      @col = col
-      @available_positions[@col] += 1 
-        # if column is full then value (row) incremented to 6
-    end 
-
-    def render_frame 
+    def render_board 
       puts "\nCURRENT BOARD"
       puts   "-------------"
       
       puts " --- --- --- --- --- --- --- "
-      @frame.reverse.each do |row|
+      @board.reverse.each do |row|
         row.each do |cell|
           print "| #{cell} "
         end
@@ -50,12 +80,7 @@ module ConnectFour
       end
     end
 
-    def available_positions?   # col is full if row > 5
-      @available_positions.each { |row| return true unless row > 5  }
-      false
-    end
-
-   # Search for line of four consecutive counters. Start from the position of the latest counter. Search in all available direct-ions. If another 3 eligible counters are of the same color, then there is a "line of four". 
+   # Search for line of four consecutive counters. Start from the position of the latest counter. Search in all available direct-ions. If another 3 three eligible counters are of the same color, then there is a "line of four". Eliminate impossible edge condition searches from the start. 
 
     def line_of_four?
       result = vert_d? || horiz_lr? || diag_bltr? || diag_brtl?
@@ -66,8 +91,8 @@ module ConnectFour
       @consecutive_counters = 1 
       return false if @row < 3 # edge condition
       3.times do |num|
-        return false if @frame[@row - (num + 1)][@col] \
-                     != @frame[@row][@col]
+        return false if @board[@row - (num + 1)][@col] \
+                     != @board[@row][@col]
         return true if consecutive_counters_match
       end
       false
@@ -83,7 +108,7 @@ module ConnectFour
     def horiz_l? # horizontally left
       3.times do |num|
         return false if @col - (num + 1) < 0 # edge condition
-        if @frame[@row][@col - (num + 1)] ==  @frame[@row][@col]
+        if @board[@row][@col - (num + 1)] ==  @board[@row][@col]
           return true if consecutive_counters_match
         else
           return false
@@ -95,7 +120,7 @@ module ConnectFour
     def horiz_r? # horizontally right
       3.times do |num|
         return false if @col + (num + 1) > 6 # edge condition
-        if @frame[@row][@col + (num + 1)] ==  @frame[@row][@col]
+        if @board[@row][@col + (num + 1)] ==  @board[@row][@col]
           return true if consecutive_counters_match
         else
           return false
@@ -115,7 +140,7 @@ module ConnectFour
       3.times do |num|
         return false if @row - (num + 1) < 0 || @col - (num + 1) < 0
            # edge condition
-        if @frame[@row - (num + 1)][@col - (num + 1)] ==  @frame[@row][@col]
+        if @board[@row - (num + 1)][@col - (num + 1)] ==  @board[@row][@col]
           return true if consecutive_counters_match
         else
           return false
@@ -128,7 +153,7 @@ module ConnectFour
       3.times do |num|
         return false if @row + (num + 1) > 5 || @col + (num + 1) > 6
            # edge condition
-        if @frame[@row + (num + 1)][@col + (num + 1)] ==  @frame[@row][@col]
+        if @board[@row + (num + 1)][@col + (num + 1)] ==  @board[@row][@col]
           return true if consecutive_counters_match
         else
           return false
@@ -148,7 +173,7 @@ module ConnectFour
       3.times do |num|
         return false if @row - (num + 1) < 0 || @col + (num + 1) > 6
            # edge condition
-        if @frame[@row - (num + 1)][@col + (num + 1)] ==  @frame[@row][@col]
+        if @board[@row - (num + 1)][@col + (num + 1)] ==  @board[@row][@col]
           return true if consecutive_counters_match
         else
           return false
@@ -161,7 +186,7 @@ module ConnectFour
       3.times do |num|
         return false if @row + (num + 1) > 5 || @col - (num + 1) < 0
            # edge condition
-        if @frame[@row + (num + 1)][@col - (num + 1)] ==  @frame[@row][@col]
+        if @board[@row + (num + 1)][@col - (num + 1)] ==  @board[@row][@col]
           return true if consecutive_counters_match
         else
           return false
@@ -174,14 +199,17 @@ module ConnectFour
       @consecutive_counters += 1
       return true if @consecutive_counters == 4
       false
-    end  
+    end
 
     # End - Search for line of four consecutive counters
 
-  end # class Board
-
-end # Module ConnectFour
 
 
+
+  end # end class Board
+
+# #################################################
+
+Board.new.test_line_of_four
 
 

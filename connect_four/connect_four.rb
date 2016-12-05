@@ -6,6 +6,7 @@ require './connect_four_game.rb'
 # require './test.rb'
 # require './test2.rb'
 require './connect_four_board'
+require './connect_four_board_AI'
 require './connect_four_player'       # delete? See no use for this
 require './connect_four_human'
 require './connect_four_computer'

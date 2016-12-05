@@ -13,14 +13,11 @@ module ConnectFour
       @color = color
     end
 
-    def to_s
-      @name
-    end
-
+#    def make_move(available_positions=nil, board=nil)
     def make_move
       print %{
-        Make your move. Which column (1-7 from the left) are you
-        dropping your counter into? }
+        #{@name} to play. Make your move. Which column (1-7 from the 
+        left) are you dropping your counter into? }
       loop do
         until (1..7).include? (@col = gets.chomp.to_i)
           print "Incorrect entry. Try again: "
@@ -28,7 +25,8 @@ module ConnectFour
         break unless @board.available_positions[@col - 1] > 5
         print "Column already filled. Choose another: "
       end
-      @board.update_board(@col - 1, @color)
+      puts "in make_move ... @color = #{@color}"
+      @col - 1
     end
 
   end
